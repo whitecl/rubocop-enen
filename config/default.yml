@@ -1,1 +1,6 @@
 # Write it!
+
+Enen/NonNilMessageOnNillishObject:
+  Description: "description of Enen/NonNilMessageOnNillishObject"
+  Enabled: true
+  VersionAdded: "<<next>>"
