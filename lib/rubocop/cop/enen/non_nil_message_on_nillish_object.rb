@@ -49,7 +49,7 @@ module RuboCop
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
         # For example
-        MSG = "Use `#good_method` instead of `#bad_method`."
+        MSG = 'Use `#good_method` instead of `#bad_method`.'
 
         # TODO: Don't call `on_send` unless the method name is in this list
         # If you don't need `on_send` in the cop you created, remove it.
@@ -57,11 +57,13 @@ module RuboCop
 
         # @!method bad_method?(node)
         def_node_matcher :bad_method?, <<~PATTERN
-          (send ... :bad_method)
+          (send (lvar :person) :bad_method)
         PATTERN
 
         def on_send(node)
           return unless bad_method?(node)
+
+          var_name_symbol, = *node.receiver
 
           add_offense(node)
         end
