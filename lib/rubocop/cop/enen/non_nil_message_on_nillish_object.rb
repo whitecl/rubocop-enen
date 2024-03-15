@@ -49,15 +49,16 @@ module RuboCop
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
         # For example
-        MSG = 'You did not use the nn_ prefix'
+        MSG = "You used a method that does not exist on nil on a variable that might be nil."
+        WHITELISTED_MESSAGES = %i[nil? blank?].freeze
 
         # TODO: Don't call `on_send` unless the method name is in this list
         # If you don't need `on_send` in the cop you created, remove it.
-        RESTRICT_ON_SEND = %i[bad_method].freeze
+        # RESTRICT_ON_SEND = %i[bad_method].freeze
 
         # @!method bad_method?(node)
-        def_node_matcher :bad_method?, <<~PATTERN
-          (send (lvar ...) :bad_method)
+        def_node_matcher :sending_to_lvar?, <<~PATTERN
+          (send (lvar ...) ...)
         PATTERN
 
         NOT_PREFIXED_WITH_NN_PATTERN = /^(?!nn_).*/
@@ -66,11 +67,13 @@ module RuboCop
         end
 
         def on_send(node)
-          return unless bad_method?(node)
+          return unless sending_to_lvar?(node)
 
           var_name_symbol, = *node.receiver
 
           return unless variable_is_not_prefixed?(var_name_symbol.to_s)
+
+          return if WHITELISTED_MESSAGES.include?(node.method_name)
 
           add_offense(node)
         end
