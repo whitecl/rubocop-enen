@@ -61,7 +61,7 @@ module RuboCop
           (send (lvar ...) ...)
         PATTERN
 
-        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!nn_).*/
+        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!nn_).*/.freeze
         def variable_is_not_prefixed?(var_name)
           !!(var_name =~ NOT_PREFIXED_WITH_NN_PATTERN)
         end
