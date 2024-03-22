@@ -49,8 +49,8 @@ module RuboCop
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
         # For example
-        MSG = "You used a method that does not exist on nil on a variable that might be nil."
-        WHITELISTED_MESSAGES = %i[nil? blank?].freeze
+        MSG = 'Usage of method "%<method>s" does not exist on nil on possibly nil variable "%<var_name>s"'
+        WHITELISTED_MESSAGES = %i[nil? blank? try].freeze
 
         # TODO: Don't call `on_send` unless the method name is in this list
         # If you don't need `on_send` in the cop you created, remove it.
@@ -69,13 +69,28 @@ module RuboCop
         def on_send(node)
           return unless sending_to_lvar?(node)
 
-          var_name_symbol, = *node.receiver
+          var_name = get_var_name(node)
 
-          return unless variable_is_not_prefixed?(var_name_symbol.to_s)
+          return unless variable_is_not_prefixed?(var_name)
 
           return if WHITELISTED_MESSAGES.include?(node.method_name)
 
-          add_offense(node)
+          add_offense(node, message: formatted_message(node.method_name, var_name))
+        end
+
+        private
+
+        def get_var_name(node)
+          var_name_symbol, = *node.receiver
+          var_name_symbol.to_s
+        end
+
+        def formatted_message(method_name, var_name)
+          format(
+            self.class::MSG,
+            method: method_name,
+            var_name: var_name
+          )
         end
       end
     end
