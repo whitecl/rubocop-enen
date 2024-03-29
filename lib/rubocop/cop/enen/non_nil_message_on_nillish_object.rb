@@ -58,10 +58,10 @@ module RuboCop
 
         # @!method bad_method?(node)
         def_node_matcher :sending_to_lvar?, <<~PATTERN
-          (send (lvar ...) ...)
+          (send ({ivar lvar} ...) ...)
         PATTERN
 
-        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!nn_).*/.freeze
+        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!@?nn_).*/.freeze
         def variable_is_not_prefixed?(var_name)
           !!(var_name =~ NOT_PREFIXED_WITH_NN_PATTERN)
         end
