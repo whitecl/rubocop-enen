@@ -50,7 +50,7 @@ module RuboCop
         #
         # For example
         MSG = 'Usage of method "%<method>s" does not exist on nil on possibly nil variable "%<var_name>s"'
-        WHITELISTED_MESSAGES = %i[nil? blank? try].freeze
+        PERMITTED_MESSAGES = %i[nil? blank? try].freeze
 
         # TODO: Don't call `on_send` unless the method name is in this list
         # If you don't need `on_send` in the cop you created, remove it.
@@ -73,7 +73,7 @@ module RuboCop
 
           return unless variable_is_not_prefixed?(var_name)
 
-          return if WHITELISTED_MESSAGES.include?(node.method_name)
+          return if PERMITTED_MESSAGES.include?(node.method_name)
 
           add_offense(node, message: formatted_message(node.method_name, var_name))
         end
