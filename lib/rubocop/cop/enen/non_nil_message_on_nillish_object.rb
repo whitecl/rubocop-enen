@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "enen-shared"
+
 module RuboCop
   module Cop
     module Enen
@@ -43,54 +45,24 @@ module RuboCop
       #   good_foo_method(args)
       #
       class NonNilMessageOnNillishObject < Base
-        # TODO: Implement the cop in here.
-        #
-        # In many cases, you can use a node matcher for matching node pattern.
-        # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-        #
-        # For example
+        include EnenShared
+
         MSG = 'Usage of method "%<method>s" on possibly nil variable "%<var_name>s"'
-        PERMITTED_MESSAGES = %i[nil? blank? try].freeze
 
-        # TODO: Don't call `on_send` unless the method name is in this list
-        # If you don't need `on_send` in the cop you created, remove it.
-        # RESTRICT_ON_SEND = %i[bad_method].freeze
-
-        # @!method bad_method?(node)
         def_node_matcher :sending_to_lvar_or_ivar?, <<~PATTERN
           (send ({ivar lvar} ...) ...)
         PATTERN
-
-        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!@?nn_).*/.freeze
-        def variable_is_not_prefixed?(var_name)
-          !!(var_name =~ NOT_PREFIXED_WITH_NN_PATTERN)
-        end
 
         def on_send(node)
           return unless sending_to_lvar_or_ivar?(node)
 
           var_name = get_var_name(node)
 
-          return unless variable_is_not_prefixed?(var_name)
+          return if variable_is_nn_prefixed?(var_name)
 
-          return if PERMITTED_MESSAGES.include?(node.method_name)
+          return if NIL_CHECKING_MESSAGES.include?(node.method_name)
 
           add_offense(node, message: formatted_message(node.method_name, var_name))
-        end
-
-        private
-
-        def get_var_name(node)
-          var_name_symbol, = *node.receiver
-          var_name_symbol.to_s
-        end
-
-        def formatted_message(method_name, var_name)
-          format(
-            self.class::MSG,
-            method: method_name,
-            var_name: var_name
-          )
         end
       end
     end

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "enen-shared"
+
 module RuboCop
   module Cop
     module Enen
@@ -43,23 +45,13 @@ module RuboCop
       #   good_foo_method(args)
       #
       class NilCheckingNonNilObject < Base
-        # TODO: Implement the cop in here.
-        #
-        # In many cases, you can use a node matcher for matching node pattern.
-        # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
-        #
-        # For example
+        include EnenShared
+
         MSG = 'Uneccessary nil checking with method "%<method>s" on non-nil variable "%<var_name>s"'
-        NIL_CHECKING_MESSAGES = %i[nil? blank? try].freeze
 
         def_node_matcher :sending_to_lvar_or_ivar?, <<~PATTERN
           (send ({ivar lvar} ...) ...)
         PATTERN
-
-        PREFIXED_WITH_NN_PATTERN = /^@*nn_.*/.freeze
-        def variable_is_nn_prefixed?(var_name)
-          !!(var_name =~ PREFIXED_WITH_NN_PATTERN)
-        end
 
         def on_send(node)
           return unless sending_to_lvar_or_ivar?(node)
@@ -71,19 +63,6 @@ module RuboCop
           if NIL_CHECKING_MESSAGES.include?(node.method_name)
             add_offense(node, message: formatted_message(node.method_name, var_name))
           end
-        end
-
-        def get_var_name(node)
-          var_name_symbol, = *node.receiver
-          var_name_symbol.to_s
-        end
-
-        def formatted_message(method_name, var_name)
-          format(
-            self.class::MSG,
-            method: method_name,
-            var_name: var_name
-          )
         end
       end
     end
