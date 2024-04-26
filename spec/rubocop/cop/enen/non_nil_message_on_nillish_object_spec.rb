@@ -8,7 +8,7 @@ RSpec.describe RuboCop::Cop::Enen::NonNilMessageOnNillishObject, :config do
       expect_offense(<<~RUBY)
         person = "bob"
         person.capitalize
-        ^^^^^^^^^^^^^^^^^ Enen/NonNilMessageOnNillishObject: Usage of method "capitalize" does not exist on nil on possibly nil variable "person"
+        ^^^^^^^^^^^^^^^^^ Enen/NonNilMessageOnNillishObject: Usage of method "capitalize" on possibly nil variable "person"
       RUBY
     end
 
@@ -34,7 +34,7 @@ RSpec.describe RuboCop::Cop::Enen::NonNilMessageOnNillishObject, :config do
           def test
             @person = "bob"
             @person.capitalize
-            ^^^^^^^^^^^^^^^^^^ Enen/NonNilMessageOnNillishObject: Usage of method "capitalize" does not exist on nil on possibly nil variable "@person"
+            ^^^^^^^^^^^^^^^^^^ Enen/NonNilMessageOnNillishObject: Usage of method "capitalize" on possibly nil variable "@person"
           end
         end
       RUBY

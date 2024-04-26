@@ -42,28 +42,23 @@ module RuboCop
       #   # good
       #   good_foo_method(args)
       #
-      class NonNilMessageOnNillishObject < Base
+      class NilCheckingNonNilObject < Base
         # TODO: Implement the cop in here.
         #
         # In many cases, you can use a node matcher for matching node pattern.
         # See https://github.com/rubocop/rubocop-ast/blob/master/lib/rubocop/ast/node_pattern.rb
         #
         # For example
-        MSG = 'Usage of method "%<method>s" on possibly nil variable "%<var_name>s"'
-        PERMITTED_MESSAGES = %i[nil? blank? try].freeze
+        MSG = 'Uneccessary nil checking with method "%<method>s" on non-nil variable "%<var_name>s"'
+        NIL_CHECKING_MESSAGES = %i[nil? blank? try].freeze
 
-        # TODO: Don't call `on_send` unless the method name is in this list
-        # If you don't need `on_send` in the cop you created, remove it.
-        # RESTRICT_ON_SEND = %i[bad_method].freeze
-
-        # @!method bad_method?(node)
         def_node_matcher :sending_to_lvar_or_ivar?, <<~PATTERN
           (send ({ivar lvar} ...) ...)
         PATTERN
 
-        NOT_PREFIXED_WITH_NN_PATTERN = /^(?!@?nn_).*/.freeze
-        def variable_is_not_prefixed?(var_name)
-          !!(var_name =~ NOT_PREFIXED_WITH_NN_PATTERN)
+        PREFIXED_WITH_NN_PATTERN = /^@*nn_.*/.freeze
+        def variable_is_nn_prefixed?(var_name)
+          !!(var_name =~ PREFIXED_WITH_NN_PATTERN)
         end
 
         def on_send(node)
@@ -71,14 +66,12 @@ module RuboCop
 
           var_name = get_var_name(node)
 
-          return unless variable_is_not_prefixed?(var_name)
+          return unless variable_is_nn_prefixed?(var_name)
 
-          return if PERMITTED_MESSAGES.include?(node.method_name)
-
-          add_offense(node, message: formatted_message(node.method_name, var_name))
+          if NIL_CHECKING_MESSAGES.include?(node.method_name)
+            add_offense(node, message: formatted_message(node.method_name, var_name))
+          end
         end
-
-        private
 
         def get_var_name(node)
           var_name_symbol, = *node.receiver

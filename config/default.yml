@@ -1,6 +1,9 @@
-# Write it!
+Enen/NilCheckingNonNilObject:
+  Description: "Reports unnecessary nil checking on objects with an nn prefix"
+  Enabled: true
+  VersionAdded: "<<next>>"
 
 Enen/NonNilMessageOnNillishObject:
-  Description: "description of Enen/NonNilMessageOnNillishObject"
+  Description: "Reports possible NoMethodError on method calls to non-nn-prefixed objects"
   Enabled: true
   VersionAdded: "<<next>>"
