@@ -1,24 +1,43 @@
 # Rubocop::Enen
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rubocop/enen`. To experiment with that code, run `bin/console` for an interactive prompt.
+Adds duck-typed optionals to Ruby via rubocop
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
-
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG --require=false
+    $ bundle add rubocop-enen --require=false
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+    $ gem install rubocop-enen
 
 ## Usage
 
-TODO: Write usage instructions here
+rubocop-enen provides a path to documenting optionality in your ruby project. Just prefix any variable with `nn_` to mark it as non-nil. Other variables are assumed to be possibly nil.
+
+rubocop-enen will error on any attempt to treat a non-prefixed variable as non-nil. It will also error on treating a prefixed variable as possibly nil.
+
+Good:
+
+```
+nn_person = "bob"
+bob.capitalize
+```
+
+Bad:
+
+```
+person = "bob"
+bob.capitalize
+```
+
+Also Bad:
+
+```
+nn_person = "bob"
+nn_person.nil?
+```
 
 ## Development
 
@@ -33,7 +52,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the Rubocop::Enen project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/rubocop-enen/blob/main/CODE_OF_CONDUCT.md).
