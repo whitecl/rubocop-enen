@@ -5,44 +5,20 @@ require_relative "enen-shared"
 module RuboCop
   module Cop
     module Enen
-      # TODO: Write cop description and example of bad / good code. For every
-      # `SupportedStyle` and unique configuration, there needs to be examples.
-      # Examples must have valid Ruby syntax. Do not use upticks.
+      # Checks for messages being sent to variables that might be nil with
+      # messages that a nil object won't accept. nn_ prefixed variables
+      # (variables that you guarantee are non-nil) are excluded from
+      # these checks.
       #
-      # @safety
-      #   Delete this section if the cop is not unsafe (`Safe: false` or
-      #   `SafeAutoCorrect: false`), or use it to explain how the cop is
-      #   unsafe.
-      #
-      # @example EnforcedStyle: bar (default)
-      #   # Description of the `bar` style.
+      # @example
       #
       #   # bad
-      #   bad_bar_method
-      #
-      #   # bad
-      #   bad_bar_method(args)
+      #   person = "bob"
+      #   person.capitalize
       #
       #   # good
-      #   good_bar_method
-      #
-      #   # good
-      #   good_bar_method(args)
-      #
-      # @example EnforcedStyle: foo
-      #   # Description of the `foo` style.
-      #
-      #   # bad
-      #   bad_foo_method
-      #
-      #   # bad
-      #   bad_foo_method(args)
-      #
-      #   # good
-      #   good_foo_method
-      #
-      #   # good
-      #   good_foo_method(args)
+      #   nn_person = "bob"
+      #   nn_person.capitalize
       #
       class NonNilMessageOnNillishObject < Base
         include EnenShared
