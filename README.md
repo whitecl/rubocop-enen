@@ -2,6 +2,8 @@
 
 Adds duck-typed optionals to Ruby via rubocop
 
+This is an experimental implementation of an untested idea. **Don't use this!**
+
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
@@ -22,14 +24,14 @@ Good:
 
 ```
 nn_person = "bob"
-bob.capitalize
+nn_person.capitalize
 ```
 
 Bad:
 
 ```
 person = "bob"
-bob.capitalize
+person.capitalize
 ```
 
 Also Bad:
